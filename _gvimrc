@@ -1,0 +1,1120 @@
+" Module's Vimrc
+""" INITIATE		{{{
+set nocompatible	" ²»¼æÈİÄ£Ê½£¬·ÅÔÚµÚÒ»ĞĞ²ÅÄÜ±£Ö¤ËùÓĞÑ¡Ïî¿ÉÓÃ
+filetype plugin on
+syntax on
+
+"set mapleader
+let mapleader = ","
+
+" Platform
+function! MySys()
+	if has("win32")
+		return "windows"
+	else
+		return "linux"
+	endif
+endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""TEST
+"if MySys() == 'windows'
+"	map e iwindows
+"elseif MySys() == 'linux'
+"	map e ilinux
+"endif
+"""""""""""""""""""""""""""""""""""""""""""
+
+if MySys() == 'windows'
+    "source $VIMRUNTIME/vimrc_example.vim
+    source $VIMRUNTIME/../vimfiles/mswin-mine.vim
+    behave mswin
+
+    set diffexpr=MyDiff()
+    function! MyDiff()
+        let opt = '-a --binary '
+        if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+        if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+        let arg1 = v:fname_in
+        if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+        let arg2 = v:fname_new
+        if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+        let arg3 = v:fname_out
+        if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+        let eq = ''
+        if $VIMRUNTIME =~ ' '
+          if &sh =~ '\<cmd'
+            let cmd = '""' . $VIMRUNTIME . '\diff"'
+            let eq = '"'
+          else
+            let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+          endif
+        else
+          let cmd = $VIMRUNTIME . '\diff'
+        endif
+        silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3 . eq
+    endfunction
+elseif MySys() == 'linux'
+endif
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" }}}
+""" FUNCTION		{{{
+let g:M_cmprg=0
+function! ChangeMakeprg()
+	if g:M_cmprg==0
+		setl makeprg=g++\ -Wall\ -I/home/lixl/mysoft/boost_1_42_0\ -o%<.out\ %
+		echo "g++ -I/boost"
+		let g:M_cmprg=1
+	elseif g:M_cmprg==1
+		setl makeprg=make\ -j\ 2
+		echo "make -j 2"
+		let g:M_cmprg=0
+	endif
+endfunction
+
+let g:M_hc=0
+function! M_HideCursor()
+	if g:M_hc==0
+		highlight Cursor gui=NONE guifg=NONE guibg=NONE
+		let g:M_hc=1
+	else
+		highlight Cursor gui=NONE guifg=black guibg=yellow
+		let g:M_hc=0
+	endif
+endfunction
+
+function! SwitchToBuf(filename)
+	"let fullfn = substitute(a:filename, "^\\~/", $HOME . "/", "")
+	" find in current tab
+	let bufwinnr = bufwinnr(a:filename)
+	if bufwinnr != -1
+		exec bufwinnr . "wincmd w"
+		return
+	else
+	" find in each tab
+		tabfirst
+		let tab = 1
+		while tab <= tabpagenr("$")
+				let bufwinnr = bufwinnr(a:filename)
+				if bufwinnr != -1
+					exec "normal " . tab . "gt"
+					exec bufwinnr . "wincmd w"
+					return
+				endif
+				tabnext
+				let tab = tab + 1
+		endwhile
+		" not exist, new tab
+		exec "tabnew " . a:filename
+	endif
+endfunction
+
+" lookup file with ignore case ºöÂÔ´óĞ¡Ğ¡²éÑ¯ÎÄ¼ş
+function! LookupFile_IgnoreCaseFunc(pattern)
+	let _tags = &tags
+	try
+		let &tags = eval(g:LookupFile_TagExpr)
+		let newpattern = '\c' . a:pattern
+		let tags = taglist(newpattern)
+	catch
+		echohl ErrorMsg | echo "Exception: " . v:exception | echohl NONE
+		return ""
+	finally
+		let &tags = _tags
+	endtry
+	" Show the matches for what is typed so far.
+	let files = map(tags, 'v:val["filename"]')
+	return files
+endfunction
+let g:LookupFile_LookupFunc = 'LookupFile_IgnoreCaseFunc'
+
+" Correct front words
+function! CorrectFrontWord()
+	normal m`
+	normal [s
+	normal 1z=
+	normal ``
+endfunction
+
+" É¾³ıÄ©Î²µÄ¶àÓà¿Õ¸ñ
+function! RemoveTrailingSpace()
+	normal m`
+	"silent! :%s/\s\+$//e
+	silent! :%s/\s\+$//e
+	"silent! :noh<cr>
+	normal ``
+endfunction
+
+" ×î´ó×îĞ¡»¯ÉèÖÃ
+let g:MineIfMax=0
+function! IfMaxMize()
+	if g:MineIfMax == 0
+		silent :simalt ~x
+		let g:MineIfMax = 1
+	else
+		silent :simalt ~r
+		let g:MineIfMax = 0
+	endif
+endfunction
+
+let g:MineFdm=1
+function! ChangeFdm()
+	if g:MineFdm == 0
+		silent :set fdm=manual
+		let g:MineFdm=1
+	elseif g:MineFdm == 1
+		silent :set fdm=marker
+		let g:MineFdm=2
+	elseif g:MineFdm == 2
+		silent :set fdm=indent
+		let g:MineFdm=0
+	endif
+endfunction
+
+function! CppSetting()
+	set autoindent 		" ¼Ì³ĞÇ°Ò»ĞĞµÄËõ½ø·½Ê½£¬ÌØ±ğÊÊÓÃÓÚ¶àĞĞ×¢ÊÍ
+	set smartindent 	" ÎªC³ÌĞòÌá¹©×Ô¶¯Ëõ½ø
+	set cindent 		" Ê¹ÓÃCÑùÊ½µÄËõ½ø
+	set tabstop=4
+	set shiftwidth=4 	" Ëõ½ø¿í¶ÈÎª4
+	"set softtabstop=4 	" ÉèÖÃÈíÖÆ±í·û
+	set nu
+	setl tags=tags
+	setl fdm=syntax
+	setl foldlevel=4
+	if has("gui_running")
+		set cursorline
+		hi cursorline guibg=#333333
+		hi CursorColumn guibg=#333333
+	endif
+	setl makeprg=make\ -j\ 2
+	"setl makeprg=g++\ -Wall\ -o%<.out\ %
+	"setl makeprg=g++\ -Wall\ -I/home/lixl/boost_1_42_0\ -o%<.out\ %
+	"setl makeprg=g++\ -Wall\ -o%<.out\ \*.cpp
+	"setl makeprg=icc\ -Wall\ -o%<.out\ \*.cpp
+	"setl makeprg=icc\ \*.cpp
+	"setl makeprg=g++\ -Wall\ -I/home/lixl/boost_1_42_0\ -o%<.out\ \*.cpp
+	"setl makeprg=gcc\ -Wall\ -o%<.out\ %
+	"setl makeprg=gcc\ -Wall\ -o%<.out\ \*.c
+	map <buffer> <leader><space> :wa<cr>:make<cr>
+	inoremap <buffer> 0o cout <<
+	inoremap <buffer> 0i cin >>
+	inoremap <buffer> 0\ \n";
+endfunction
+
+" ×î´ó×îĞ¡»¯ÉèÖÃ
+let g:MineIfMouse=0
+function! IfMouse()
+	if g:MineIfMouse == 0
+		set mouse=a
+		let g:MineIfMouse = 1
+	else
+		set mouse=""
+		let g:MineIfMouse = 0
+	endif
+endfunction
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""" }}}
+""" PLUG SET		{{{
+
+""""""""""""""""""""""""""""""
+" markbrowser setting
+""""""""""""""""""""""""""""""
+nmap <silent> <leader>mk :MarksBrowser<cr>
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" SHOWMARK
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"ShowMarks²å¼şÖĞÒÑ¾­¶¨ÒåÁËÒ»Ğ©¿ì½İ¼ü£º
+"<leader>mt - ´ò¿ª/¹Ø±ÕShowMarks²å¼ş
+"<leader>mo - Ç¿ÖÆ´ò¿ªShowMarks²å¼ş
+"<leader>mh - Çå³ıµ±Ç°ĞĞµÄ±ê¼Ç
+"<leader>ma - Çå³ıµ±Ç°»º³åÇøÖĞËùÓĞµÄ±ê¼Ç
+"<leader>mm - ÔÚµ±Ç°ĞĞ´òÒ»¸ö±ê¼Ç£¬Ê¹ÓÃÏÂÒ»¸ö¿ÉÓÃµÄ±ê¼ÇÃû
+
+let showmarks_enable = 0
+" Show which marks
+let showmarks_include = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+" Ignore help, quickfix, non-modifiable buffers
+let showmarks_ignore_type = "hqm"
+" Hilight lower & upper marks
+let showmarks_hlline_lower = 1
+let showmarks_hlline_upper = 1
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ÖÇÄÜ²¹È« OMNI
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"¹Ø±ÕcppÖÇÄÜ²¹È«
+let OmniCpp_MayCompleteDot = 0
+let OmniCpp_MayCompleteArrow = 0
+let OmniCpp_MayCompleteScope = 0
+
+" Ê¹ÓÃpumvisible()À´ÅĞ¶ÏÏÂÀ­²Ëµ¥ÊÇ·ñÏÔÊ¾
+inoremap <expr> <CR> pumvisible()?"\<C-Y>":"\<CR>"
+"Èç¹ûÏÂÀ­²Ëµ¥µ¯³ö£¬»Ø³µÓ³ÉäÎª½ÓÊÜµ±Ç°ËùÑ¡ÏîÄ¿£¬·ñÔò£¬ÈÔÓ³ÉäÎª»Ø³µ
+inoremap <expr> <C-J> pumvisible()?"\<PageDown>\<C-N>\<C-P>":"\<C-X><C-O>"
+"Èç¹ûÏÂÀ­²Ëµ¥µ¯³ö£¬CTRL-JÓ³ÉäÎªÔÚÏÂÀ­²Ëµ¥ÖĞÏòÏÂ·­Ò³¡£·ñÔòÓ³ÉäÎªCTRL-X CTRL-O
+"inoremap <expr> <C-K> pumvisible()?"\<PageUp>\<C-P>\<C-N>":"\<C-K>"
+"Èç¹ûÏÂÀ­²Ëµ¥µ¯³ö£¬CTRL-KÓ³ÉäÎªÔÚÏÂÀ­²Ëµ¥ÖĞÏòÉÏ·­Ò³£¬·ñÔòÈÔÓ³ÉäÎªCTRL-K
+"inoremap <expr> <C-U> pumvisible()?"\<C-E>":"\<C-U>"
+"Èç¹ûÏÂÀ­²Ëµ¥µ¯³ö£¬CTRL-UÓ³ÉäÎªCTRL-E£¬¼´Í£Ö¹²¹È«£¬·ñÔò£¬ÈÔÓ³ÉäÎªCTRL-U
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" ×Ô¶¯²¹È« OMNI
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"ÕûĞĞ²¹È«			CTRL-X CTRL-L
+"¸ù¾İµ±Ç°ÎÄ¼şÀï¹Ø¼ü×Ö²¹È«	CTRL-X CTRL-N
+"¸ù¾İ×Öµä²¹È«			CTRL-X CTRL-K
+"¸ù¾İÍ¬Òå´Ê×Öµä²¹È«		CTRL-X CTRL-T
+"¸ù¾İÍ·ÎÄ¼şÄÚ¹Ø¼ü×Ö²¹È«		CTRL-X CTRL-I
+"¸ù¾İ±êÇ©²¹È«			CTRL-X CTRL-]
+"²¹È«ÎÄ¼şÃû			CTRL-X CTRL-F
+"²¹È«ºê¶¨Òå			CTRL-X CTRL-D
+"²¹È«vimÃüÁî			CTRL-X CTRL-V
+"ÓÃ»§×Ô¶¨Òå²¹È«·½Ê½		CTRL-X CTRL-U
+"Æ´Ğ´½¨Òé			CTRL-X CTRL-S
+
+"inoremap <C-]> <C-X><C-]>
+inoremap <C-F> <C-X><C-F>
+"inoremap <C-D> <C-X><C-D>
+inoremap <C-L> <C-X><C-L>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" QUICKFIX
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+nmap <leader>cn :cn<cr>
+nmap <leader>cp :cp<cr>
+nmap <leader>cw :botright cw 10<cr><c-w><c-w>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" cscope setting
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if MySys() == 'linux'
+	if has("cscope") && filereadable("/usr/local/bin/cscope")
+		set csprg=/usr/local/bin/cscope
+		set csto=1
+		set cst
+		set nocsverb
+		" add any database in current directory
+		if filereadable("cscope.out")
+			cs add cscope.out
+		" else add database pointed to by environment
+		elseif $CSCOPE_DB != ""
+			cs add $CSCOPE_DB
+		endif
+		set csverb
+	endif
+
+	nmap <silent> <leader>ac :cs add cscope.out<cr>
+
+	nmap <C-c>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-c>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-c>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-c>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+	nmap <C-c>t :cs find t<space>
+	nmap <C-c>e :cs find e<space>
+	nmap <C-c>f :cs find f<space>
+	"nmap <C-c>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+	"nmap <C-c>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+	"nmap <C-c>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+	nmap <C-c>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+
+	nmap <C-c>h :echo " s: ²éÕÒCÓïÑÔ·ûºÅ£¬¼´²éÕÒº¯ÊıÃû¡¢ºê¡¢Ã¶¾ÙÖµµÈ³öÏÖµÄµØ·½\n g: ²éÕÒº¯Êı¡¢ºê¡¢Ã¶¾ÙµÈ¶¨ÒåµÄÎ»ÖÃ£¬ÀàËÆctagsËùÌá¹©µÄ¹¦ÄÜ\n d: ²éÕÒ±¾º¯Êıµ÷ÓÃµÄº¯Êı\n c: ²éÕÒµ÷ÓÃ±¾º¯ÊıµÄº¯Êı\n t: ²éÕÒÖ¸¶¨µÄ×Ö·û´®\n e: ²éÕÒegrepÄ£Ê½£¬Ïàµ±ÓÚegrep¹¦ÄÜ£¬µ«²éÕÒËÙ¶È¿ì¶àÁË\n f: ²éÕÒ²¢´ò¿ªÎÄ¼ş£¬ÀàËÆvimµÄfind¹¦ÄÜ\n i: ²éÕÒ°üº¬±¾ÎÄ¼şµÄÎÄ¼ş"<cr>
+
+endif
+" s: ²éÕÒCÓïÑÔ·ûºÅ£¬¼´²éÕÒº¯ÊıÃû¡¢ºê¡¢Ã¶¾ÙÖµµÈ³öÏÖµÄµØ·½
+" g: ²éÕÒº¯Êı¡¢ºê¡¢Ã¶¾ÙµÈ¶¨ÒåµÄÎ»ÖÃ£¬ÀàËÆctagsËùÌá¹©µÄ¹¦ÄÜ
+" d: ²éÕÒ±¾º¯Êıµ÷ÓÃµÄº¯Êı
+" c: ²éÕÒµ÷ÓÃ±¾º¯ÊıµÄº¯Êı
+" t: ²éÕÒÖ¸¶¨µÄ×Ö·û´®
+" e: ²éÕÒegrepÄ£Ê½£¬Ïàµ±ÓÚegrep¹¦ÄÜ£¬µ«²éÕÒËÙ¶È¿ì¶àÁË
+" f: ²éÕÒ²¢´ò¿ªÎÄ¼ş£¬ÀàËÆvimµÄfind¹¦ÄÜ
+" i: ²éÕÒ°üº¬±¾ÎÄ¼şµÄÎÄ¼ş
+
+""""""""""""""""""""""""""""""
+" Tag list (ctags)
+""""""""""""""""""""""""""""""
+if MySys() == "windows"
+	let Tlist_Ctags_Cmd = 'ctags'
+elseif MySys() == "linux"
+	let Tlist_Ctags_Cmd = '/usr/local/bin/ctags' "Éè¶¨linuxÏµÍ³ÖĞctags³ÌĞòµÄÎ»ÖÃ
+endif
+
+let Tlist_Show_One_File = 1 "²»Í¬Ê±ÏÔÊ¾¶à¸öÎÄ¼şµÄtag£¬Ö»ÏÔÊ¾µ±Ç°ÎÄ¼şµÄ
+let Tlist_Exit_OnlyWindow = 1 "Èç¹ûtaglist´°¿ÚÊÇ×îºóÒ»¸ö´°¿Ú£¬ÔòÍË³övim
+let Tlist_Use_Right_Window = 1 "ÔÚÓÒ²à´°¿ÚÖĞÏÔÊ¾taglist´°¿Ú
+let Tlist_Use_SingleClick = 1 "µ¥»÷´ò¿ª±êÇ©
+""""""""""""""""""""""""""""""
+" Ctags
+""""""""""""""""""""""""""""""
+set tags=tags;
+
+""""""""""""""""""""""""""""""
+" netrw setting
+""""""""""""""""""""""""""""""
+nmap <silent> <leader>fe :Sexplore!<cr>
+let g:netrw_winsize = 30
+
+""""""""""""""""""""""""""""""
+" BufExplorer
+""""""""""""""""""""""""""""""
+let g:bufExplorerDefaultHelp=0
+let g:bufExplorerShowRelativePath=1
+let g:bufExplorerSortBy='mru'
+let g:bufExplorerSplitRight=0
+let g:bufExplorerSplitVertical=1
+let g:bufExplorerSplitVertSize=30
+let g:bufExplorerUseCurrentWindow=1
+autocmd BufWinEnter \[Buf\ List\] setl
+
+"""""""""""""""""""""""""""""""
+" winManager setting
+""""""""""""""""""""""""""""""
+if MySys() == "linux"
+	"let g:winManagerWindowLayout = "BufExplorer,FileExplorer|TagList"
+	let g:winManagerWindowLayout = "FileExplorer|TagList"
+	let g:winManagerWidth = 30
+	let g:defaultExplorer = 0
+	nmap <C-W><C-F> :FirstExplorerWindow<cr>
+	nmap <C-W><C-B> :BottomExplorerWindow<cr>
+endif
+
+
+""""""""""""""""""""""""""""""
+" lookupfile setting
+""""""""""""""""""""""""""""""
+" let g:LookupFile_MinPatLength = 2               "×îÉÙÊäÈë2¸ö×Ö·û²Å¿ªÊ¼²éÕÒ
+" let g:LookupFile_PreserveLastPattern = 0        "²»±£´æÉÏ´Î²éÕÒµÄ×Ö·û´®
+" let g:LookupFile_PreservePatternHistory = 1     "±£´æ²éÕÒÀúÊ·
+" let g:LookupFile_AlwaysAcceptFirst = 1          "»Ø³µ´ò¿ªµÚÒ»¸öÆ¥ÅäÏîÄ¿
+" let g:LookupFile_AllowNewFiles = 0              "²»ÔÊĞí´´½¨²»´æÔÚµÄÎÄ¼ş
+" let g:LookupFile_ableDefaultMap = 0 			"¹Ø±ÕÄ¬ÈÏÓ³Éä
+" if filereadable("./filenametags")                "ÉèÖÃtagÎÄ¼şµÄÃû×Ö
+" 	let g:LookupFile_TagExpr = '"./filenametags"'
+" endif
+" "Ó³ÉäLookupFileÎª,lk
+" "nmap <silent> <leader>lk <Plug>LookupFile<cr>
+" "Ó³ÉäLUBufsÎª,ll
+" nmap <silent> <leader>ll :LUBufs<cr>
+" "Ó³ÉäLUWalkÎª,lw
+" nmap <silent> <leader>lw :LUWalk<cr>
+" nmap <silent> <leader>lk :LUWalk<cr>
+
+""""""""""""""""""""""""""""""""""""""""""
+"LAMMPS
+""""""""""""""""""""""""""""""""""""""""""
+if MySys() == "linux"
+	au  BufNewFile,BufReadPost *.lmp so ~/.vim/all_file/lammps.vim
+	autocmd FileType lmp so ~/.vim/all_file/lammps.vim
+	nmap <silent> <leader>lm :set ft=lmp<cr>
+endif
+
+""""""""""""""""""""""""""""""""""""""""""
+" CSUPPORT
+""""""""""""""""""""""""""""""""""""""""""
+"²»ÊäÈë×Ô¶¯µÄ×¢ÊÍ×Ö·û
+" let g:C_TemplateOverwrittenMsg = 'no'
+" let g:C_Ctrl_j = 'off'
+" let g:C_TemplateOverwrittenMsg= 'yes'
+" \ss ²åÈëswitch½á¹¹ 	\im ²åÈëmainº¯Êı
+" \ntr ÖØ¶ÁÄ£°æ 		\hp ²é¿´°ïÖú
+" ²åÈëNote½á¹¹switch
+"noremap  <buffer>  <silent>  <LocalLeader>sn        :call C_InsertTemplate("statements.switch-note")<CR>
+
+""""""""""""""""""""""""""""""""""""""""""
+" MARK
+""""""""""""""""""""""""""""""""""""""""""
+nmap <silent> <leader>mn <Plug>MarkSet
+nmap <silent> <leader>nm <Plug>MarkClear
+nmap <silent> <leader>rm :source ~/.vim/plugin/mark.vim<cr>
+
+""""""""""""""""""""""""""""""""""""""""""
+" Session manageer
+""""""""""""""""""""""""""""""""""""""""""
+" list sessions to open
+nmap <silent> <leader>ls :SessionList<cr>
+" make session
+nmap <leader>ms :SessionSave<cr>
+
+""""""""""""""""""""""""""""""""""""""""""
+" CCtree
+""""""""""""""""""""""""""""""""""""""""""
+"let g:CCTreeCscopeDb = "cscope.out"
+"let g:CCTreeOrientation = "topleft"
+"nmap <silent> <leader>st :CCTreeWindowToggle<cr>
+
+""""""""""""""""""""""""""""""""""""""""""
+" VIM GDB
+""""""""""""""""""""""""""""""""""""""""""
+let g:vimgdb_debug_file = ""
+"run macros/gdb_mappings_modified.vim
+"run macros/gdb_mappings.vim
+nmap <silent> <leader>vg :bel 30vsplit gdb-variables<cr>
+nmap <silent> <leader>gdb :run macros/gdb_mappings.vim<cr>
+nmap <leader>hg :echo "\n \tSpace launch the interactive gdb input-line window\n \tCTRL-Z  send an interrupt to GDB and the program it is running\n \tB\tinfo breakpoints\n \tL\tinfo locals\n \tA\tinfo args\n \tS\tstep\n \tI\tstepi\n \tCTRL-N\tnext: next source line, skipping all function calls\n \tX\tnexti\n \tF\tfinish\n \tR\trun\n \tQ\tquit\n \tC\tcontinue\n \tW\twhere\n \tCTRL-U\tup: go up one frame\n \tCTRL-D\tdown: go down one frame\n \tCTRL-B\tset a breakpoint on the line where the cursor is located\n \tCTRL-E\tclear all breakpoints on the line where the cursor is located\n \tCTRL-P\tNormal mode: print value of word under cursor\n \t\tVisual mode: GDB command createvar selected expression, see\n \t\tgdb-variables\n \tCTRL-X\tprint value of data referenced by word under cursor\n \n CTRL-B and CTRL-E operate both on source code and on disassembled code in\n assembly buffers.\n"<cr>
+
+""""""""""""""""""""""""""""""""""""""""""
+" Tex
+""""""""""""""""""""""""""""""""""""""""""
+" IMPORTANT: win32 users will need to have 'shellslash' set so that latex
+" can be called correctly.
+"set shellslash
+
+" IMPORTANT: grep will sometimes skip displaying the file name if you
+" search in a singe file. This will confuse Latex-Suite. Set your grep
+" program to always generate a file-name.
+"set grepprg=grep\ -nH\ $*
+
+" OPTIONAL: Starting with Vim 7, the filetype of empty .tex files defaults to
+" 'plaintex' instead of 'tex', which results in vim-latex not being loaded.
+" The following changes the default filetype back to 'tex':
+"let g:tex_flavor='latex'
+""""""""""""""""""""""""""""""""""""""""""
+" FuzzyFinder
+""""""""""""""""""""""""""""""""""""""""""
+" nmap <silent> <F5> :FufFile<cr>
+nmap <silent> <F5> :FufLine<cr>
+nmap <silent> <leader>lk :FufFile<cr>
+nmap <silent> <leader>ff :FufFile<cr>
+nmap <silent> <leader>fq :FufQuickfix<cr>
+nmap <silent> <leader>fu :FufRenewCache<cr>
+nmap <silent> <leader>ft :FufTag<cr>
+nmap <silent> <leader>fl :FufLine<cr>
+" nmap <silent> <leader>fj :FufJumpList<cr>
+" nmap <silent> <leader>fc :FufChangeList<cr>
+
+""""""""""""""""""""""""""""""""""""""""""
+" MRU
+""""""""""""""""""""""""""""""""""""""""""
+if MySys() == 'windows'
+	let MRU_File = $VIMRUNTIME.'/_vim_mru_files' " which file to save mru entries
+elseif MySys() == "linux"
+	let MRU_File = $VIMDATA.'/_vim_mru_files' " which file to save mru entries
+endif
+let MRU_Max_Entries = 20 " max mru entries in _vim_mru_files 
+nmap <silent> <leader>mr :MRU<cr>
+nmap <silent> <leader>mu :MRU<cr>
+
+""""""""""""""""""""""""""""""""""""""""""
+" FencView
+""""""""""""""""""""""""""""""""""""""""""
+nmap <silent> <leader>fc :FencView<cr>
+" let g:fencview_autodetect = 0
+
+"""""""""""""""""""""""""""""""""""""""""""""""}}}
+""" SETTING		{{{
+
+"Fast edit vimrc
+if MySys() == 'linux'
+	"Fast reloading of the .vimrc
+	map <silent> <leader>ss :source ~/.vimrc<cr>
+	"Fast editing of .vimrc
+	map <silent> <leader>ee :call SwitchToBuf("~/.vimrc")<cr>
+	"When .vimrc is edited, reload it
+	autocmd! bufwritepost .vimrc source ~/.vimrc
+elseif MySys() == 'windows'
+	" Set helplang
+	"set helplang=cn
+	"Fast reloading of the _vimrc
+	nmap <silent> <leader>ss :source $VIM/_vimrc<cr>
+	"Fast editing of _vimrc
+	nmap <silent> <leader>ee :call SwitchToBuf("$VIM/_vimrc")<cr>
+	"When _vimrc is edited, reload it
+	autocmd! bufwritepost _vimrc source $VIM/_vimrc
+endif
+
+if has("gui_running")
+	source $VIMRUNTIME/menu.vim
+	set wildmenu
+	set cpo-=<
+	set wcm=<C-Z>
+endif
+
+if has("gui_running")
+    "¹â±êÍ£Ö¹ÉÁË¸
+    set guicursor+=n-v-i-c-r:block-cursor-blinkon0
+    "¼ò»¯½çÃæ
+    set guioptions-=m
+    set guioptions-=T
+    set guioptions-=L
+    set guioptions-=l
+    set guioptions-=r
+    set guioptions-=R
+
+    "Æô¶¯´óĞ¡ ¼°ÅäÉ«
+    if MySys() == "linux"
+        "winpos 0 30
+        set lines=37 columns=70
+	set gfn=Monospace
+	colo mine-darkblue2
+    elseif MySys() == "windows"
+	"set gfn=YaHei\ Consolas\ Hybrid:h10.5
+	"set gfn=Yahei\ Mono:h10.5
+	set gfn=Consolas:h10
+	colorscheme molokai
+    endif
+
+else
+    if MySys() == "linux"
+    	"colo mine-desert256
+    	"colo gardener-mine
+		colo mine-elflord
+    	"colo jammy
+    elseif MySys() == "windows"
+	colo mine-bluegreen
+    endif
+endif
+
+"µ±Ç°ÃæÓĞÒ»¸ö·´Ğ±¸ÜÊ±£¬ÕâĞ©×Ö·û¾ßÓĞÌØÊâµÄº¬Òå¡£ÔÚËÑË÷ÖĞ³£ÓÃ
+set magic
+
+"»»ĞĞÊ±£¬°Ñ±£³Öµ¥´ÊÍêÕû
+set nolinebreak
+
+"""""""""""""""""""""""""""""""""""""TEXT FILE
+"if &filetype==""
+"	colo mine-matrix
+"endif
+
+"Ò»°ãµÄÎÄµµÓÃmatrixÅäÉ«£¬±£»¤ÊÓÁ¦
+if has("gui_running")
+	"au BufNewFile,BufRead *.txt	colo mine-matrix
+endif
+"au BufNewFile,BufRead *.txt	map <buffer> <up> <c-y>
+"au BufNewFile,BufRead *.txt	map <buffer> <down> <c-e>
+
+"""""""""""""""""""""""""""""""""""""C SETTING
+
+autocmd FileType c,cpp call CppSetting()
+
+"""""""""""""""""""""""""""""""""""""""""" SUPERTAB
+"let g:SuperTabRetainCompletionType = 2
+" let g:SuperTabDefaultCompletionType = "<C-X><C-P>"
+let g:SuperTabDefaultCompletionType = "<C-P>"
+"ÓÃc-gÊäÈëtab
+"autocmd FileType c,cpp inoremap <c-g> <space><tab>
+" Ö»²¹È«µ±Ç°ÎÄ¼şÖĞµÄ´ÊÓï
+set complete=.,w,b,u,t
+" set complete=.,w,b,u,t,i
+
+""""""""""""""""""""""""""""""""""""""""""
+" NeoComplCache
+""""""""""""""""""""""""""""""""""""""""""
+" let g:NeoComplCache_DisableAutoComplete = 1
+" "let g:SuperTabDefaultCompletionType = '<C-X><C-U>'
+" """"""""""""""""""""
+" 
+" " Disable AutoComplPop.
+" let g:acp_enableAtStartup = 0
+" " Use neocomplcache.
+" let g:neocomplcache_enable_at_startup = 1
+" " Use smartcase.
+" let g:neocomplcache_enable_smart_case = 1
+" " Use camel case completion.
+" let g:neocomplcache_enable_camel_case_completion = 1
+" " Use underbar completion.
+" let g:neocomplcache_enable_underbar_completion = 1
+" " Set minimum syntax keyword length.
+" let g:neocomplcache_min_syntax_length = 3
+" let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+" 
+" " Define dictionary.
+" let g:neocomplcache_dictionary_filetype_lists = {
+"     \ 'default' : '',
+"     \ 'vimshell' : $HOME.'/.vimshell_hist',
+"     \ 'scheme' : $HOME.'/.gosh_completions'
+" 	\ }
+" 
+" " Define keyword.
+" if !exists('g:neocomplcache_keyword_patterns')
+"     let g:neocomplcache_keyword_patterns = {}
+" endif
+" let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+" 
+" " Plugin key-mappings.
+" imap <C-k>     <Plug>(neocomplcache_snippets_expand)
+" smap <C-k>     <Plug>(neocomplcache_snippets_expand)
+" inoremap <expr><C-g>     neocomplcache#undo_completion()
+" inoremap <expr><C-l>     neocomplcache#complete_common_string()
+" 
+" " SuperTab like snippets behavior.
+" "imap <expr><TAB> neocomplcache#sources#snippets_complete#expandable() ? "\<Plug>(neocomplcache_snippets_expand)" : pumvisible() ? "\<C-n>" : "\<TAB>"
+" 
+" " Recommended key-mappings.
+" " <CR>: close popup and save indent.
+" inoremap <expr><CR>  neocomplcache#smart_close_popup() . (&indentexpr != '' ? "\<C-f>\<CR>X\<BS>":"\<CR>")
+" " <TAB>: completion.
+" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" " <C-h>, <BS>: close popup and delete backword char.
+" inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+" inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+" inoremap <expr><C-y>  neocomplcache#close_popup()
+" inoremap <expr><C-e>  neocomplcache#cancel_popup()
+" 
+" " AutoComplPop like behavior.
+" "let g:neocomplcache_enable_auto_select = 1
+" 
+" " Enable omni completion.
+" autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+" autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+" autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+" autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+" autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+" 
+" " Enable heavy omni completion.
+" if !exists('g:neocomplcache_omni_patterns')
+" 	let g:neocomplcache_omni_patterns = {}
+" endif
+" let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
+"autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
+
+""""""""""""""""""""""""""""""""""""""""""HELP READING
+"autocmd FileType help nmap <buffer> j <c-e>
+"autocmd FileType help nmap <buffer> k <c-y>
+"autocmd FileType help noremap <buffer> J <down>
+"autocmd FileType help noremap <buffer> K <up>
+"autocmd FileType help nmap <buffer> H <left>
+"autocmd FileType help nmap <buffer> L <right>
+"autocmd FileType help nmap <buffer> q <c-w>c:set virtualedit=""<cr>:file<cr>
+"autocmd FileType help setl so=0
+"autocmd FileType help setl virtualedit=all
+""""""""""""""""""""""""""""""""""""""""""HELP END
+
+"Super paste
+if MySys() == "linux"
+	inoremap <c-v> <esc>:set paste<cr>mui<C-R>+<esc>mv'uV'v=:set nopaste<cr>
+endif
+
+"Always hide the statusline
+set laststatus=2
+
+function! CurDir()
+   let curdir = substitute(getcwd(), 'c:/Documents and Settings/ÄÏÑôÒ°ÈË/', "~/", "g")
+   return curdir
+endfunction
+
+"Format the statusline
+"set statusline=\ %F%m%r%h\ %w\ \ CWD:\ %r%{CurDir()}%h\ \ \ Line:\ %l/%L:%c\ [%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]
+"set statusline=\ %F%m%r%h\ %w\ \ Line:\%l/%L:%c\[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]
+set statusline=\ %F%m%r%h\ %w\ \Line:\%l/%L:%c\[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %P "rs
+"set statusline=%t[%{strlen(&fenc)?&fenc:'none'},%{&ff}]%h%m%r%y%=%c,%l/%L\ %P
+"set statusline=%F%m%r%h%w\ [FORMAT=%{&ff}]\ [TYPE=%Y]\ [POS=%l,%v][%p%%]\ %{strftime(\"%d/%m/%y\ -\ %H:%M\")}
+" jamessan's
+"set statusline=   " clear the statusline for when vimrc is reloaded
+""set statusline+=%-3.3n\                      " buffer number
+"set statusline+=%F\                          " file name
+"set statusline+=%h%m%r%w                     " flags
+"set statusline+=[%{strlen(&ft)?&ft:'none'},  " filetype
+"set statusline+=%{strlen(&fenc)?&fenc:&enc}, " encoding
+"set statusline+=%{&fileformat}]              " file format
+"set statusline+=%=                           " right align
+""set statusline+=%{synIDattr(synID(line('.'),col('.'),1),'name')}\  " highlight
+"set statusline+=%b,0x%-8B\                   " current char
+"set statusline+=%-14.(%l,%c%V%)\ %<%P        " offset
+
+"Set to auto read when a file is changed from the outside
+set autoread
+
+"set expandtab	"½«tab¼üÀ©Õ¹³É¿Õ¸ñ
+
+set cmdheight=1
+
+"Ä¬ÈÏÎªÓ¢ÎÄ°ïÖú
+"set helplang=en
+
+"ÔÚvimÖĞ²é¿´Man
+runtime ftplugin/man.vim
+
+"È¥µôÃ¿ĞĞ¿ªÍ·ÏÔÊ¾¸ö"@"
+set dy=lastline
+
+"Enable filetype plugin
+filetype plugin on
+"filetype indent on
+
+set incsearch
+set ignorecase smartcase
+"set hls
+set showcmd
+"rs modify
+set number
+set relativenumber
+
+if MySys() == "linux"
+	set directory=/tmp,.,~/tmp,/var/tmp
+elseif MySys() == "windows"
+	set directory=$HOME,.,d:\temp
+endif
+
+set wildmenu "ÏÔÊ¾ÃüÁîºòÑ¡Ñ¡Ïî
+
+"No sound on errors.
+set noerrorbells
+set novisualbell
+set t_vb=
+
+"ÈÃvi×Ô¶¯Ê¶±ğ±àÂë
+"set fencs=gb18030,gbk,gb2312,big5,euc-jp,euc-kr,latin1,cp936,utf-8,ucs-bom
+set fileencodings=gbk,ucs-bom,utf-8
+
+"¹¤×÷Ä¿Â¼Îªµ±Ç°Ä¿Â¼
+set autochdir
+
+" Æô¶¯µÄÊ±ºò²»ÏÔÊ¾ÄÇ¸öÔ®ÖúË÷ÂíÀï¶ùÍ¯µÄÌáÊ¾
+set shortmess=atI
+
+"Ê¹ÓÃÊó±ê
+set mouse=a
+
+set bs=2		" allow backspacing over everything in insert mode
+set nobackup
+"set backup		" keep a backup file
+"set viminfo='20,\"50	" read/write a .viminfo file, don't store more
+			" than 50 lines of registers
+set history=50		" keep 50 lines of command line history
+"set ruler		" show the cursor position all the time
+
+" Only do this part when compiled with support for autocommands
+if has("autocmd")
+  " In text files, always limit the width of text to 78 characters
+  "autocmd BufRead *.txt set tw=78
+  " When editing a file, always jump to the last cursor position
+  autocmd BufReadPost *
+  \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+  \   exe "normal! g'\"" |
+  \ endif
+endif
+
+
+if &term=="xterm"
+     set t_Co=8
+     set t_Sb=[4%dm
+     set t_Sf=[3%dm
+endif
+
+"hi MatchParen ctermbg=Yellow
+"Change buffer - without saving
+"set hid
+
+"·ÀÖ¹ÖĞÎÄ°ë¸öÉ¾
+set ambiwidth=double
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""}}}
+""" MAP SET
+" ÌØÊâ¼üÉèÖÃ {{{
+
+" ²é¿´ÉÏ´ÎËù²é¿´µÄ°ïÖúÎÄµµ
+nmap <c-f1> :h <up><cr>
+
+if has("gui_running")
+    "¿ìËÙÆôÓÃ²Ëµ¥
+    nmap <silent> <m-F2> :if &guioptions =~# 'T' <Bar>
+    	   \set guioptions-=T <Bar>
+    	   \set guioptions-=m <Bar>
+	   \set guioptions-=r <Bar>
+       \else <Bar>
+    	   \set guioptions+=T <Bar>
+    	   \set guioptions+=m <Bar>
+	   \set guioptions+=r <Bar>
+       \endif<CR>
+endif
+
+nmap <f2> <Plug>MarkSet
+nmap <c-f2> <Plug>MarkClear
+
+nmap <F3> @a
+imap <F3> <esc>@a
+
+"if has("gui_running")
+"    nmap <F4> :emenu <C-Z>
+"endif
+
+"<F4>ÇĞ»»taglist´ò¿ª»ò¹Ø±Õ
+nmap <F4> :TlistToggle<cr>
+imap <F4> <C-O>:TlistToggle<CR>
+
+
+"autocmd FileType c,cpp map <f5> :w<cr>:make<cr>:!./%<.out<cr>
+" autocmd FileType cpp map <f6> :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .<cr>
+" autocmd FileType c map <f6> :!ctags -R .<cr>
+
+"nmap <f7> :call ChangeFdm()<cr>:set fdm<cr>
+"nmap <f7> <Plug>LookupFile<cr>
+"nmap <F7> :LUWalk<cr>
+
+"set screensaver Matrix
+nmap <F8> :Matrix<cr>
+
+if MySys() == 'windows' && has("gui_running")
+	nmap <silent> <f11> :call IfMaxMize()<cr>
+	nmap <F12> :simalt ~n<cr>
+endif
+
+
+"""}}}
+"ÆÕÍ¨¼üÉèÖÃ {{{
+
+if has("gui_running") " Ó³ÉäËùÓĞAlt+XX¼ü¡££¨Ö»ÓĞGui½çÃæ²ÅÄÜÓ³Éä£©
+	imap <m-h> <left>
+	imap <m-l> <right>
+	imap <m-j> <down>
+	imap <m-k> <up>
+endif 
+
+"autocmd FileType c,cpp nmap <buffer> f zf%
+
+" ÓÃtab¼üÀ´¿ª¹ØÕÛµş
+nnoremap <silent> <s-tab> @=((foldclosed(line('.')) < 0) ? 'zc' : 'zo')<cr>
+"nnoremap <silent> <s-tab> zv<cr>
+"nnoremap <silent> <s-tab> @=((foldclosed(line('.')) < 0) ? 'zv' : 'zx')<cr>
+
+imap <c-u> <cr>
+inoremap <c-u><c-u> <c-u>
+
+" ÃüÁîĞĞÉèÖÃ
+cnoremap <C-A>    <Home>
+cnoremap <C-E>    <End>
+
+"ÃüÁîĞĞÖĞ¿ìËÙÓ³Éä·½Ïò¼ü
+cnoremap <c-l> <right>
+cnoremap <c-h> <left>
+cnoremap <c-k> <up>
+cnoremap <c-j> <down>
+
+"noremap <c-w>x <c-w>x<c-w><c-w>
+
+"±à¼­Ê±£¬¿ìËÙ½«µ±Ç°ĞĞÖÃÖĞ
+inoremap <c-z> <c-o>zz
+
+inoremap <c-a> <home>
+inoremap <c-e> <end>
+
+nmap ' `
+
+if MySys() == 'windows' && has("gui_running")
+    nmap <m-j> <c-e>
+    nmap <m-k> <c-y>
+endif
+
+" Key mappings to ease browsing long lines
+noremap	 j	gj
+noremap	 k	gk
+"noremap  <Down>      gj
+"noremap  <Up>        gk
+"inoremap <Down> <C-O>gj
+"inoremap <Up>   <C-O>gk
+
+" ÓÎÀÀÉèÖÃ
+nmap <up> <c-y>
+nmap <down> <c-e>
+nmap <right> :tabnext<cr>
+nmap <left> :tabprevious<cr>
+" nmap <c-down> <c-w>j
+" nmap <c-up> <c-w>k
+" nmap <c-left> <c-w>h
+" nmap <c-right> <c-w>l
+
+"change tab
+"nmap <tab> :tabnext<cr>
+nmap <c-n> :tabnext<cr>
+nmap <c-p> :tabprevious<cr>
+
+"Map space to / and c-space to ?
+"nmap <space> <c-f> "rs
+"nmap <bs> <c-b> "rs
+
+"Smart way to move btw. windows
+nmap <C-j> <C-W>j
+nmap <C-k> <C-W>k
+nmap <C-h> <C-W>h
+nmap <C-l> <C-W>l
+
+"imap <silent> <c-k> <c-o>:call CorrectFrontWord()<cr>
+"""}}}
+"×Ô¶¨Òå<leader>Ó³Éä	{{{
+
+nmap <leader>bp i<space><esc>la<space><esc>h
+
+nmap <leader>sh :shell<cr>
+
+"nmap <leader>nd :NERDTreeToggle<cr>  "rs modify
+nmap <leader>nt :NERDTreeToggle<cr>
+"nmap <leader>ab :Bookmark<space>
+
+""""""""""""""""""""""""""""""""""""""""""
+" Program Reading
+""""""""""""""""""""""""""""""""""""""""""
+" nmap <leader>gr :!grep --color * -e<space>
+nmap <leader>gr :!grep -n --color *.cpp *.h -e<space>
+nmap <leader>g2 :!grep --color *.cpp *.h -n -B 2 -A 2 -e<space>
+nmap <leader>g3 :!grep --color *.cpp *.h -n -B 2 -A 2 -e<space>
+
+nmap <silent> <leader>scp :source ~/.vim/all_file/Program/<cr>
+nmap <silent> <leader>scom :!ctags -R --c++-kinds=+p --fields=+iaS --extra=+q *.cpp *.h<cr>
+
+nmap <silent> <leader>pp :call CppSetting()<cr>
+
+" nmap <silent> <leader>ma :call IfMouse()<cr>
+
+nmap <silent> <leader>mp :call ChangeMakeprg()<cr>
+
+nmap <silent> <leader>aa :A<cr>
+nmap <silent> <leader>av :AV<cr>
+nmap <silent> <leader>as :AS<cr>
+
+nmap <silent> <leader>ca :CalendarH<cr>
+
+nmap <silent> <leader>sf :call CorrectFrontWord()<cr>
+
+nmap <silent> <leader>sc 1z=
+
+nmap <silent> <leader>tw :set formatoptions+=t<cr>
+
+" ÔÄ¶ÁÄ£Ê½
+nmap <silent> <leader>re :colo matrix<cr>:call M_HideCursor()<cr>
+
+" ½¨Á¢ctagsÎÄ¼ş
+nmap <silent> <leader>tg :!ctags -R .<cr>:set tags=tags<cr>
+
+nmap <silent> <leader>M :marks<cr>
+
+" ²é¿´µ±Ç°ÎÄ¼ş¼Ğ
+nmap <silent> <leader>e. :e .<cr>
+
+nmap <silent> <leader>E :e!<cr>
+
+" quick new
+nmap <silent> <leader>ne :next<cr>
+
+" hide cursor
+nmap <silent> <leader>a :call M_HideCursor()<cr>
+
+"¿ª¹ØÆ´Ğ´¼ì²é
+nmap <leader>sl :set spell!<bar>set nospell?<cr>
+
+"¹Ø±ÕºÍ¿ªÆôhsl
+nmap <leader>x :set hls!<bar>set hls?<cr>
+
+nmap <leader>cl :set cursorline!<bar>set cursorline?<cr>
+
+"¿ìËÙ²éÕÒ¹â±êÏÂµÄµ¥´Ê£º
+nmap <leader>lv :lv /<c-r>=expand("<cword>")<cr>/ %<cr>:lw<cr>
+
+"other mapset
+nmap <silent> <leader>tn :tabnew<cr>
+
+" vsplit
+nmap <silent> <leader>vs :vsplit<cr>
+" vnew
+noremap <silent> <leader>vn :vnew<cr>
+" new
+noremap <silent> <leader>nw :new<cr>
+" split
+nmap <silent> <leader>sp :split<cr>
+
+nmap <silent> <leader>o :only<cr>
+
+"É¾³ıÄ©Î²µÄ¶àÓà¿Õ¸ñ
+map <silent> <leader>el :call RemoveTrailingSpace()<cr>
+
+"quick exit
+nmap <silent> <leader>q :q<cr>
+"quick save
+nmap <silent> <leader>w :w<cr>
+nmap <silent> <leader>W :wa<cr>
+"quick save and quit
+nmap <silent> <leader>z ZZ<cr>
+nmap <silent> <leader>g <c-w>]
+nmap <silent> <leader>pr <c-w>}
+nmap <silent> <leader>px <c-w>z
+"quick quit
+nmap <silent> <leader>Q :qa<cr>
+
+if has("gui_running")
+	"´ò¿ªguiµÄÎÄ¼şÓÎÀÀÆ÷
+	nmap <silent> <leader>ve :browse vsplit<cr>
+	nmap <silent> <leader>ew :browse write<cr>
+	nmap <silent> <leader>ed :browse edit<cr>
+	nmap <silent> <leader>te :browse tabedit<cr>
+else
+	nmap <leader>ve :vsplit<space>
+	nmap <leader>ew :write<space>
+	nmap <leader>ed :edit<space>
+	nmap <leader>te :tabedit<space>
+endif
+
+"½øÈëgui½çÃæ£¬ÍË³öÖÕ¶Ë»·¾³£¬Ô­ÓĞ»·¾³²»±ä
+if MySys() == "linux"
+	noremap <silent> <leader>G :gui<cr>:source ~/.vimrc<cr>
+elseif MySys() == "windows"
+	noremap <silent> <leader>G :gui<cr>:source $VIM/_vimrc<cr>
+endif
+
+
+"""}}}
+""""""""""""""""""""""""""""""""""""""""""""""""" MAP END
+""" ABBREV		{{{
+iab 0# ##########################################
+iab 0" """"""""""""""""""""""""""""""""""""""""""
+iab 0/ //////////////////////////////////////////
+"iab 0d <c-r>=strftime("%y/%m/%d")<cr>
+iab 0d <c-r>=strftime("%y/%m/%d %H:%M:%S")<cr>
+"""""""""""""""""""""""""""""""""""""""""""""""""}}}
+""" ENDING		{{{
+"¹Ø±Õ×Ô¶¯ÅÅ°æ£¬Ê¡µÃÀÏÊÇÔÚÒ»ĞĞµÄ×¢ÊÍÖ®ºóÓÖÒªÔÙÉÏÈ¥×Ô¶¯Ìí¼ÓµÄ×¢ÊÍ×Ö·û
+autocmd BufRead *.txt setl formatoptions=""
+autocmd FileType vim,zsh,sh,conf setl formatoptions=""
+"""""""""""""""""""""""""""""""""""""""""""""""""}}}
+""" TODO		 {{{
+" ×´Ì¬ĞĞÑÕÉ«
+"highlight StatusLine guifg=SlateBlue guibg=Yellow
+"highlight StatusLineNC guifg=Gray guibg=White
+" Óëwindows¹²Ïí¼ôÌù°å
+"set clipboard+=unnamed
+" ÔÚ±»·Ö¸îµÄ´°¿Ú¼äÏÔÊ¾¿Õ°×£¬±ãÓÚÔÄ¶Á
+"set fillchars=vert:\ ,stl:\ ,stlnc:\
+" µ÷ÕûÎÄ¼ş
+"nmap <leader>fd :se fileformat=dos<cr>
+"nmap <leader>fu :se fileformat=unix<cr>
+
+"Remove the Windows ^M
+"noremap <leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+"È·±£ Vim ÄÜÔÚÖĞÎÄ×Ö·ûÖ®¼äÕÛĞĞ¶ø²»ÒªÇó¿Õ¸ñµÄ´æÔÚ£¬²¢ÇÒÔÚ´ó²¿·ÖÇé¿öÏÂ¿ÉÒÔÕıÈ·µØ´¦ÀíÖĞÎÄÖØĞÂ¸ñÊ½»¯¡£
+set formatoptions+=mMB
+
+"Favorite filetypes
+"set ffs=dos,unix,mac
+
+"autocmd BufWinLeave *.* silent mkview
+"autocmd BufWinEnter *.* silent loadview
+
+"""""""""""""""""""""""""""""""""""""""""""""""""}}}
+set fdm=marker
+
+" RS DEFINE {{{
+"colorscheme molokai
+"colorscheme desert
+colorscheme despacio
+if has('gui_running') && has("win32")
+    map <F11> :call libcallnr("gvimfullscreen.dll", "ToggleFullScreen", 0)<CR>
+endif
+
+function! NERDTreeRefreshPath()
+	exec "NERDTree ."
+endfunction
+" cd path | NERDTree path
+function! CD(path)
+	exec "cd ".a:path
+	exec "NERDTree ."
+endfunction
+
+nmap <leader>cc :set cursorcolumn!<bar>set cursorcolumn?<cr>
+nmap <leader>nt :NERDTreeToggle<cr>
+nmap <silent><leader>nf :call NERDTreeRefreshPath()<cr>
+
+command -nargs=+ CD :call CD(<f-args>)
+
+"}}}
