@@ -1,7 +1,30 @@
 # Most recently edited files in Vim (version 3.0)
+<<<<<<< HEAD
 I:\work\frame\volley\Android.mk
 I:\work\project\frame\androidmvp\app\src\main\java\com\antonioleiva\mvpexample\app\login\LoginPresenterImpl.java
 I:\work\project\frame\androidmvp\app\src\main\java\com\antonioleiva\mvpexample\app\login\LoginActivity.java
 D:\program\Vim\vim80\indent.vim
 D:\program\Vim\vim80\mswin.vim
 D:\program\Vim\vimfiles\mswin-mine.vim
+=======
+D:\program\vim\_gvimrc
+C:\Users\xwj01\_viminfo
+C:\Users\xwj01\Desktop\temp\despacio_term.vim
+C:\Users\xwj01\Desktop\err.txt
+C:\users\xwj01\desktop\temp\desert.vim
+D:\program\Vim\_vimrc
+D:\program\Vim\_gvimrc
+D:\program\Vim\vimfiles\plugin\NERD_tree.vim
+D:\program\cygwin64\home\xwj01\.vimrc
+D:\program\Vim\vimfiles\plugin\tcomment.vim
+D:\program\vim\vim80\colors\despacio.vim
+C:\Users\xwj01\desktop\temp\desert.vim
+D:\program\cygwin64\home\xwj01\.tmux.conf
+C:\Users\xwj01\Desktop\temp\despacio.vim
+D:\program\Vim\vim80\colors\despacio.vim
+D:\program\Vim\vim80\colors\molokai.vim
+D:\program\Vim\vim80\colors\desert.vim
+D:\program\Vim\vim80\colors\industry.vim
+F:\rs_learn\project-c\2016-11-13\demo1_bool.c
+D:\program\cygwin64\home\xwj01\.vim\colors\molokai_term.vim
+>>>>>>> origin/master

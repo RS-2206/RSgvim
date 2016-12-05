@@ -120,6 +120,8 @@ if has("printer")
   an 10.500 &File.-SEP3-			<Nop>
   an 10.510 &File.&Print			:hardcopy<CR>
   vunmenu   &File.&Print
+  " error
+  "vunmenu   &File.&Print 
   vnoremenu &File.&Print			:hardcopy<CR>
 elseif has("unix")
   an 10.500 &File.-SEP3-			<Nop>
