@@ -211,9 +211,12 @@ if 1
     hi StatusLine        ctermfg=187        guifg=#dfdfaf         ctermbg=233      guibg=#121212      cterm=NONE    gui=NONE
     hi StatusLineNC      ctermfg=245        guifg=#8a8a8a         ctermbg=233      guibg=#121212      cterm=NONE    gui=NONE
     hi VertSplit         ctermfg=245        guifg=#8a8a8a         ctermbg=233      guibg=#121212      cterm=NONE    gui=NONE
-    hi TabLine           ctermfg=245        guifg=#8a8a8a         ctermbg=233      guibg=#121212      cterm=NONE    gui=NONE
-    hi TabLineSel        ctermfg=187        guifg=#dfdfaf         ctermbg=233      guibg=#121212      cterm=NONE    gui=NONE
-    hi TabLineFill       ctermfg=NONE       guifg=NONE            ctermbg=233      guibg=#121212      cterm=NONE    gui=NONE
+    "hi TabLine           ctermfg=245        guifg=#8a8a8a         ctermbg=233      guibg=#121212      cterm=NONE    gui=NONE
+    "hi TabLineSel        ctermfg=187        guifg=#dfdfaf         ctermbg=233      guibg=#121212      cterm=NONE    gui=NONE
+    "hi TabLineFill       ctermfg=NONE       guifg=NONE            ctermbg=233      guibg=#121212      cterm=NONE    gui=NONE
+    hi TabLineFill ctermfg=LightGreen ctermbg=DarkGreen
+    hi TabLine ctermfg=Blue ctermbg=Yellow
+    hi TabLineSel ctermfg=Red ctermbg=Yellow
 
     " Language Constructs:
     hi Comment           ctermfg=245        guifg=#8a8a8a         ctermbg=NONE     guibg=NONE         cterm=NONE    gui=NONE

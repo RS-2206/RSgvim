@@ -1115,6 +1115,15 @@ nmap <leader>cc :set cursorcolumn!<bar>set cursorcolumn?<cr>
 nmap <leader>nt :NERDTreeToggle<cr>
 nmap <silent><leader>nf :call NERDTreeRefreshPath()<cr>
 
+"CtrlP配置
+nmap <A-S-N> :CtrlP<cr>
+
+"快速查找函数
+"nnoremap <Leader>fu :CtrlPFunky<Cr>
+" narrow the list down with a word under cursor
+nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
+
 command -nargs=+ CD :call CD(<f-args>)
+set showtabline=0
 
 "}}}
