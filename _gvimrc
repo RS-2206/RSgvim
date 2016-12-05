@@ -1118,7 +1118,9 @@ nmap <leader>nt :NERDTreeToggle<cr>
 nmap <silent><leader>nf :call NERDTreeRefreshPath()<cr>
 
 "CtrlP配置
+let g:ctrlp_working_path_mode = 'c'
 nmap <A-S-N> :CtrlP<cr>
+
 
 "快速查找函数
 "nnoremap <Leader>fu :CtrlPFunky<Cr>
