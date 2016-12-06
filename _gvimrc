@@ -1105,7 +1105,7 @@ endif
 set lines=40 columns=126
 set guifont=Consolas:h14
 set encoding=utf-8
-set showtabline=0
+"set showtabline=0
 
 function! NERDTreeRefreshPath()
 	exec "NERDTree ."
@@ -1130,6 +1130,7 @@ endfunction
 
 nmap <leader>cc :set cursorcolumn!<bar>set cursorcolumn?<cr>
 nmap <leader>nt :NERDTreeToggle<cr>
+nmap <silent><F2> :NERDTreeToggle<cr>
 nmap <silent><leader>nf :call NERDTreeRefreshPath()<cr>
 
 "CtrlP≈‰÷√
