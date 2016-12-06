@@ -1104,13 +1104,27 @@ endif
 
 set lines=40 columns=126
 set guifont=Consolas:h14
+set encoding=utf-8
+set showtabline=0
 
 function! NERDTreeRefreshPath()
 	exec "NERDTree ."
 endfunction
 " cd path | NERDTree path
 function! CD(path)
-	exec "cd ".a:path
+	if (a:path == 'desktop')
+		exec "cd $HOME/desktop"
+	elseif (a:path == 'vim')
+		exec "cd d:/program/vim"
+	elseif (a:path == 'zz')
+		exec "cd d:/project/xz_cidao"
+	elseif (a:path == 'backup')
+		exec "cd d:/project/backup"
+	elseif (a:path == 'project')
+		exec "cd d:/project"
+	else
+		exec "cd ".a:path
+	endif
 	exec "NERDTree ."
 endfunction
 
@@ -1128,7 +1142,6 @@ nmap <A-S-N> :CtrlP<cr>
 " narrow the list down with a word under cursor
 nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
 
-command -nargs=+ CD :call CD(<f-args>)
-set showtabline=0
+command! -nargs=+ CD :call CD(<f-args>)
 
 "}}}
