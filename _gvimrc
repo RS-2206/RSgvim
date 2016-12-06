@@ -1103,6 +1103,7 @@ if has('gui_running') && has("win32")
 endif
 
 set lines=40 columns=126
+set guifont=Consolas:h14
 
 function! NERDTreeRefreshPath()
 	exec "NERDTree ."
