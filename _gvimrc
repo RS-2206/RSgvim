@@ -1102,13 +1102,12 @@ if has('gui_running') && has("win32")
     map <F11> :call libcallnr("gvimfullscreen.dll", "ToggleFullScreen", 0)<CR>
 endif
 
-
 set lines=40 columns=126
-
 
 function! NERDTreeRefreshPath()
 	exec "NERDTree ."
 endfunction
+
 " cd path | NERDTree path
 function! CD(path)
 	exec "cd ".a:path
@@ -1118,8 +1117,6 @@ endfunction
 nmap <leader>cc :set cursorcolumn!<bar>set cursorcolumn?<cr>
 nmap <leader>nt :NERDTreeToggle<cr>
 nmap <silent><leader>nf :call NERDTreeRefreshPath()<cr>
-
-command -nargs=+ CD :call CD(<f-args>)
 
 "CtrlP≈‰÷√
 let g:ctrlp_working_path_mode = 'c'
@@ -1131,7 +1128,7 @@ nmap <A-S-N> :CtrlP<cr>
 " narrow the list down with a word under cursor
 nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
 
-command -nargs=+ CD :call CD(<f-args>)
+command! -nargs=+ CD :call CD(<f-args>)
 set showtabline=0
 
 "}}}
