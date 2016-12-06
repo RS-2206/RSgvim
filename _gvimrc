@@ -1103,6 +1103,9 @@ if has('gui_running') && has("win32")
 endif
 
 set lines=40 columns=126
+set guifont=Consolas:h14
+set encoding=utf-8
+"set showtabline=0
 
 function! NERDTreeRefreshPath()
 	exec "NERDTree ."
@@ -1110,12 +1113,25 @@ endfunction
 
 " cd path | NERDTree path
 function! CD(path)
-	exec "cd ".a:path
+	if (a:path == 'desktop')
+		exec "cd $HOME/desktop"
+	elseif (a:path == 'vim')
+		exec "cd d:/program/vim"
+	elseif (a:path == 'zz')
+		exec "cd d:/project/xz_cidao"
+	elseif (a:path == 'backup')
+		exec "cd d:/project/backup"
+	elseif (a:path == 'project')
+		exec "cd d:/project"
+	else
+		exec "cd ".a:path
+	endif
 	exec "NERDTree ."
 endfunction
 
 nmap <leader>cc :set cursorcolumn!<bar>set cursorcolumn?<cr>
 nmap <leader>nt :NERDTreeToggle<cr>
+nmap <silent><F2> :NERDTreeToggle<cr>
 nmap <silent><leader>nf :call NERDTreeRefreshPath()<cr>
 
 "CtrlP≈‰÷√
@@ -1129,6 +1145,5 @@ nmap <A-S-N> :CtrlP<cr>
 nnoremap <Leader>fU :execute 'CtrlPFunky ' . expand('<cword>')<Cr>
 
 command! -nargs=+ CD :call CD(<f-args>)
-set showtabline=0
 
 "}}}
