@@ -19,11 +19,11 @@ function! ToggleDocView() "打开文档窗口{{{1
 	setlocal readonly
 	setlocal nomodifiable
 
-	nmap <buffer> <CR> :call TestEcho()<CR>
+	nmap <buffer> <CR> :call ShowSubDoc()<CR>
 
 endfunction
 
-function! TestEcho() "测试{{{
+function! ShowSubDoc() "显示详细文档{{{
 	let line=getline(line("."))
 	if line==1
 		execute "edit ./doc/zhx_stk_doc.txt"
