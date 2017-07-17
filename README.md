@@ -5,6 +5,7 @@
 	报文域说明文档插件
 	在vim的右侧窗口打开域说明文档
 
+---
 ### ./pax/iso8583_bitmap_parse/iso8583bitmap.vim
 	iso8583Bitmap解析
 	用法：选择bitmap，:call Bitmap_parse()
@@ -30,3 +31,10 @@
 	60 Field: 
 	64 Field: 
 
+---
+### ./toASCII/toASCII.vim
+将2进制、8进制、10机制、16机制数字转成ASCII
+
+	特性：
+	1. 支持多个数字转换，每个数字间以空格分开
+	2. 支持2进制、8进制、10进制、16进制数字转换
