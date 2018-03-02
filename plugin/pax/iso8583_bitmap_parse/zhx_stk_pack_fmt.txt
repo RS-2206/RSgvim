@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Fmt>
+	<Info>
+		<Id id="zhx_stk_pack_fmt"/>
+		<Title title="资和信-商通卡"/>
+	</Info>
+
+    <BaseCfg>
+    	<PackHead length="7"/>
+    </BaseCfg>
+
+    <Common>
+        <Field BitNo="0"  Type="FIX"  Length="4" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>	    
+	    <Field BitNo="1"  Type="FIX"  Length="8" sendFmt="b" recvFmt="b" Padding-Direct="RIGHT" Padding-Char="0"/>	    
+        <Field BitNo="2"  Type="LLVAR"  Length="19" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>	    
+	    <Field BitNo="3"  Type="FIX"  Length="6" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+	    <Field BitNo="4"  Type="FIX"  Length="12" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>  	
+		
+		<Field BitNo="11"  Type="FIX"  Length="6" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="12"  Type="FIX"  Length="6" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="13"  Type="FIX"  Length="4" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="14"  Type="FIX"  Length="4" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="15"  Type="FIX"  Length="4" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="16"  Type="FIX"  Length="4" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="19"  Type="LLVAR"  Length="2" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+		
+		<Field BitNo="20"  Type="FIX"  Length="20" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="22"  Type="FIX"  Length="3" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="23"  Type="FIX"  Length="3" sendFmt="n" recvFmt="n" Padding-Direct="LEFT" Padding-Char="0"/>
+		
+		<Field BitNo="24"  Type="FIX"  Length="4" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		
+		<Field BitNo="25"  Type="FIX"  Length="2" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="26"  Type="FIX"  Length="2" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		
+		<Field BitNo="32"  Type="FIX"  Length="8" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="33"  Type="FIX"  Length="20" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+
+		<Field BitNo="35"  Type="LLVAR"  Length="37" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="36"  Type="LLLVAR"  Length="104" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="37"  Type="FIX"  Length="12" sendFmt="an" recvFmt="an" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="38"  Type="FIX"  Length="6" sendFmt="an" recvFmt="an" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="39"  Type="FIX"  Length="2" sendFmt="an" recvFmt="an" Padding-Direct="RIGHT" Padding-Char="0"/>
+
+		<Field BitNo="41"  Type="FIX"  Length="8" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="42"  Type="FIX"  Length="15" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="43"  Type="FIX"  Length="40" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="44"  Type="FIX"  Length="19" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char=" "/>
+
+		<Field BitNo="45"  Type="LLVAR"  Length="38" sendFmt="an" recvFmt="an" Padding-Direct="RIGHT" Padding-Char=" "/>
+
+		<Field BitNo="46"  Type="LLLVAR"  Length="999" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="47"  Type="LLLVAR"  Length="999" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="48"  Type="LLLVAR"  Length="999" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="49"  Type="FIX"  Length="3" sendFmt="an" recvFmt="an" Padding-Direct="RIGHT" Padding-Char="0"/>
+		
+		<Field BitNo="52"  Type="FIX"  Length="16" sendFmt="b" recvFmt="b" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="53"  Type="FIX"  Length="16" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="53"  Type="FIX"  Length="16" sendFmt="n" recvFmt="n" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="54"  Type="LLLVAR"  Length="20" sendFmt="an" recvFmt="an" Padding-Direct="LEFT" Padding-Char="0"/>
+		<Field BitNo="55"  Type="LLLVAR"  Length="255" sendFmt="b" recvFmt="b" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="56"  Type="LLLVAR"  Length="999" sendFmt="b" recvFmt="b" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="57"  Type="LLLVAR"  Length="999" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="58"  Type="LLLVAR"  Length="8" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+
+		<Field BitNo="60"  Type="LLLVAR"  Length="17" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="61"  Type="LLLVAR"  Length="60" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="62"  Type="LLLVAR"  Length="512" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="63"  Type="LLLVAR"  Length="999" sendFmt="ans" recvFmt="ans" Padding-Direct="RIGHT" Padding-Char="0"/>
+		<Field BitNo="64"  Type="FIX"  Length="8" sendFmt="b" recvFmt="b" Padding-Direct="RIGHT" Padding-Char="0"/>
+
+	</Common>
+</Fmt>
