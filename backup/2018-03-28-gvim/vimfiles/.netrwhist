@@ -1,0 +1,6 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =4
+let g:netrw_dirhist_1='/cygdrive/d/Project/visual_stdio/SoftTryClr/SoftTryClr/boost/smart_ptr'
+let g:netrw_dirhist_2='/home/南阳野人'
+let g:netrw_dirhist_3='/cygdrive/d/Project/visual_stdio/SoftTryClr/SoftTryClr'
+let g:netrw_dirhist_4='/home/南阳野人/.vim'
